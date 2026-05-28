@@ -1,14 +1,15 @@
 from django.db import models
+from django.urls import reverse
 
 
 class Category(models.Model):
     title = models.CharField(max_length=150, db_index=True, verbose_name='Наименование категории')
+
     def __str__(self):
         return self.title
-    class Meta:
-        verbose_name = 'Категория'
-        verbose_name_plural = 'Категории'
-        ordering = ['title']
+
+    def get_absolute_url(self):
+        return reverse('news:category', kwargs={'category_id': self.pk})
 
 
 class News(models.Model):
@@ -20,9 +21,12 @@ class News(models.Model):
     is_published = models.BooleanField(default=True, verbose_name='Опубликовано')
     category = models.ForeignKey(Category, on_delete=models.PROTECT, null=True, verbose_name='Категория')
 
-    # Create your models here.
+    def get_absolute_url(self):
+        return reverse('news:view_news', kwargs={'news_id': self.pk})  # ← исправлено (добавлено 'news:')
+
     def my_func(self):
         return "Последние новости"
+
     def __str__(self):
         return self.title
 
