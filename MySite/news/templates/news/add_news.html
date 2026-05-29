@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Добавление новости и подписка :: {{ block.super }}
+{% endblock %}
+
+{% block sidebar %}
+{% include 'inc/_sidebar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<!-- ПЕРВАЯ ФОРМА: ДОБАВЛЕНИЕ НОВОСТИ -->
+<h1>Добавление новости</h1>
+
+<form action="{% url 'news:add_news' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+   {{ form.as_p }}
+
+    <button type="submit" name="add_news" class="btn btn-primary">Добавить новость</button>
+    <button type="button" class="btn btn-secondary" id="clearPhotoBtn">Очистить фото</button>
+</form>
+
+<hr>
+
+<!-- ВТОРАЯ ФОРМА: ПОДПИСКА НА РАССЫЛКУ -->
+<h2>Подписка на рассылку</h2>
+
+{% if sub_success %}
+    <div class="alert alert-success">{{ sub_success }}</div>
+{% endif %}
+
+<form action="{% url 'news:add_news' %}" method="post">
+    {% csrf_token %}
+
+    {% for field in sub_form %}
+    <div class="mb-3">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.errors %}
+        <div class="invalid-feedback d-block">
+            {{ field.errors }}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <button type="submit" name="subscribe" class="btn btn-success">Подписаться</button>
+</form>
+
+<script>
+    document.getElementById('clearPhotoBtn').addEventListener('click', function() {
+        var photoInput = document.getElementById('id_photo');
+        if (photoInput) {
+            photoInput.value = '';
+        }
+    });
+</script>
+{% endblock %}
