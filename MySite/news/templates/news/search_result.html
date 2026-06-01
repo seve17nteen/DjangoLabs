@@ -12,8 +12,10 @@
 
 <h1>Результаты поиска по запросу "{{ query }}"</h1>
 
-{% if news %}
-    <div class="alert alert-success">Найдено новостей: {{ news|length }}</div>
+{% if page_obj.paginator.count > 0 %}
+    <div class="alert alert-success">
+        Найдено новостей: {{ page_obj.paginator.count }}
+    </div>
     
     {% for item in news %}
     <div class="card mb-3">

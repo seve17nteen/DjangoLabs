@@ -9,14 +9,17 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'news:home' %}">Главная</a>
+                    <a class="nav-link {% if request.path == '/' or request.path == '/news/' %}active{% endif %}"
+                       href="{% url 'news:home' %}">Главная</a>
                 </li>
+                {% if request.user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'news:add_news' %}">Добавить новость</a>
                 </li>
+                {% endif %}
             </ul>
 
-            <!-- ФОРМА ПОИСКА (ВАРИАНТ 13) -->
+            <!-- ФОРМА ПОИСКА -->
             <form class="d-flex" action="{% url 'news:search' %}" method="get">
                 <input class="form-control me-2" type="search" name="q" placeholder="Поиск новостей..." aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Найти</button>

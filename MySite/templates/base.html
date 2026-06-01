@@ -5,8 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
-
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <title>{% block title %}Новости со всего мира{% endblock %}</title>
 </head>
@@ -20,6 +19,58 @@
         </div>
         <div class="col-md-9">
             {% block content %}CONTENT{% endblock %}
+
+            {% if page_obj.has_other_pages %}
+                <!-- Текущая страница / всего страниц -->
+                <div class="text-center mb-2">
+                    <strong>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</strong>
+                </div>
+
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        <!-- ПЕРВАЯ СТРАНИЦА -->
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">« Первая</a>
+                        </li>
+                        {% endif %}
+
+                        <!-- ПРЕДЫДУЩАЯ СТРАНИЦА -->
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">‹ Назад</a>
+                        </li>
+                        {% endif %}
+
+                        <!-- НОМЕРА СТРАНИЦ -->
+                        {% for p in page_obj.paginator.page_range %}
+                            {% if page_obj.number == p %}
+                            <li class="page-item active" aria-current="page">
+                                <a class="page-link" href="?page={{ p }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ p }}</a>
+                            </li>
+                            {% elif p > page_obj.number|add:-3 and p < page_obj.number|add:3 %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ p }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ p }}</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- СЛЕДУЮЩАЯ СТРАНИЦА -->
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Вперед ›</a>
+                        </li>
+                        {% endif %}
+
+                        <!-- ПОСЛЕДНЯЯ СТРАНИЦА -->
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Последняя »</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
         </div>
     </div>
 </div>

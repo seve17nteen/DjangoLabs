@@ -1,5 +1,6 @@
 {% load news_tags %}
 
+<!-- СПИСОК КАТЕГОРИЙ -->
 <div class="list-group">
     {% get_list_categories as categories %}
     {% for item in categories %}
@@ -11,5 +12,26 @@
 </div>
 
 <br>
+
+<!-- ПОПУЛЯРНЫЕ НОВОСТИ (ТОП-5) -->
+<div class="list-group">
+    <div class="list-group-item list-group-item-secondary">
+         Популярные новости
+    </div>
+    {% for news in popular_news %}
+        <a href="{{ news.get_absolute_url }}"
+           class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+            {{ news.title }}
+            <span class="badge bg-primary rounded-pill">{{ news.views }}</span>
+        </a>
+    {% empty %}
+        <div class="list-group-item text-muted">
+            Нет популярных новостей
+        </div>
+    {% endfor %}
+</div>
+
+<br>
+
 
 {% show_categories %}
