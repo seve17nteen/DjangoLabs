@@ -9,7 +9,8 @@ class Category(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('news:category', kwargs={'category_id': self.pk})
+        # Исправлено: добавлено пространство имен 'news:' и правильное имя маршрута
+        return reverse('news:category', kwargs={'category_id': self.pk})  # ← для категории
 
 
 class News(models.Model):
@@ -22,7 +23,8 @@ class News(models.Model):
     category = models.ForeignKey(Category, on_delete=models.PROTECT, null=True, verbose_name='Категория')
 
     def get_absolute_url(self):
-        return reverse('news:view_news', kwargs={'news_id': self.pk})  # ← исправлено (добавлено 'news:')
+        # Исправлено: kwargs={'pk': self.pk} (т.к. в DetailView используется pk)
+        return reverse('news:view_news', kwargs={'pk': self.pk})  # ← для новости
 
     def my_func(self):
         return "Последние новости"

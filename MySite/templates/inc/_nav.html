@@ -7,7 +7,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'news:home' %}">Главная</a>
                 </li>
@@ -15,6 +15,12 @@
                     <a class="nav-link" href="{% url 'news:add_news' %}">Добавить новость</a>
                 </li>
             </ul>
+
+            <!-- ФОРМА ПОИСКА (ВАРИАНТ 13) -->
+            <form class="d-flex" action="{% url 'news:search' %}" method="get">
+                <input class="form-control me-2" type="search" name="q" placeholder="Поиск новостей..." aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Найти</button>
+            </form>
         </div>
     </div>
 </nav>
