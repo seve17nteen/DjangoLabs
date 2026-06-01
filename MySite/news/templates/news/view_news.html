@@ -19,7 +19,7 @@
             {% if news_item.photo %}
                 <img src="{{ news_item.photo.url }}" alt="" width="350" class="mr-3">
             {% else %}
-                <img src="htt   ps://picsum.photos/id/1060/350/235/?blur=2" alt="" class="mr-3">
+                <img src="https://picsum.photos/id/1060/350/235/?blur=2" alt="" class="mr-3">
             {% endif %}
             <div class="media-body">
                 <h5 class="card-title">{{ news_item.title }}</h5>
@@ -31,4 +31,24 @@
         {{ news_item.created_at|date:"Y-m-d H:i:s" }}
     </div>
 </div>
+
+<!-- Кнопка добавления комментария (Задание 2) -->
+<div class="mt-3 mb-3">
+    <a href="{% url 'news:add_comment' news_item.pk %}" class="btn btn-success">Добавить комментарий</a>
+</div>
+
+<!-- Список комментариев -->
+<h3>Комментарии:</h3>
+{% for comment in news_item.comments.all %}
+    <div class="card mb-2">
+        <div class="card-body">
+            <strong>{{ comment.author.name }}</strong>
+            <span class="text-muted">({{ comment.created_at|date:"Y-m-d H:i" }})</span>
+            <p class="mb-0 mt-2">{{ comment.text }}</p>
+            <small class="text-muted">Рейтинг: {{ comment.rating }}</small>
+        </div>
+    </div>
+{% empty %}
+    <p>Нет комментариев. Будьте первым!</p>
+{% endfor %}
 {% endblock %}

@@ -1,9 +1,25 @@
 from django import forms
-from django.template.defaultfilters import title
-
-from .models import News, Category
+from .models import News, Category, Comment
 import re
 from django.core.exceptions import ValidationError
+from captcha.fields import CaptchaField
+
+
+class ContactForm(forms.Form):
+    subject = forms.CharField(
+        label='Тема',
+        max_length=100,
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Тема сообщения"})
+    )
+    email = forms.EmailField(
+        label='Email',
+        widget=forms.EmailInput(attrs={"class": "form-control", "placeholder": "your@email.com"})
+    )
+    content = forms.CharField(
+        label='Сообщение',
+        widget=forms.Textarea(attrs={"class": "form-control", "rows": 5, "placeholder": "Ваше сообщение..."})
+    )
+    captcha = CaptchaField(label='Капча')
 
 
 class NewsForm(forms.ModelForm):
@@ -35,7 +51,6 @@ class NewsForm(forms.ModelForm):
         return title
 
 
-# ДОБАВЛЕНА НОВАЯ ФОРМА ДЛЯ ПОДПИСКИ
 class SubscriptionForm(forms.Form):
     email = forms.EmailField(
         label='Email для рассылки',
@@ -48,3 +63,20 @@ class SubscriptionForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Имя (необязательно)'})
     )
+
+
+# ФОРМА ДЛЯ КОММЕНТАРИЕВ С КАПЧЕЙ (ЗАДАНИЕ 2)
+class CommentForm(forms.ModelForm):
+    captcha = CaptchaField(label='Капча')
+
+    class Meta:
+        model = Comment
+        fields = ['author', 'text']
+        widgets = {
+            'author': forms.Select(attrs={'class': 'form-control'}),
+            'text': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Ваш комментарий'}),
+        }
+        labels = {
+            'author': 'Автор',
+            'text': 'Текст комментария',
+        }

@@ -13,10 +13,10 @@
 
 <br>
 
-<!-- ПОПУЛЯРНЫЕ НОВОСТИ (ТОП-5) -->
+<!-- ТОП-10 ПОПУЛЯРНЫХ НОВОСТЕЙ (ЗАДАНИЕ 3) -->
 <div class="list-group">
     <div class="list-group-item list-group-item-secondary">
-         Популярные новости
+        🔥 Топ-10 популярных новостей
     </div>
     {% for news in popular_news %}
         <a href="{{ news.get_absolute_url }}"
@@ -33,5 +33,5 @@
 
 <br>
 
-
+<!-- ПОСЛЕДНИЕ НОВОСТИ ПО КАТЕГОРИЯМ -->
 {% show_categories %}

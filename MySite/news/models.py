@@ -34,10 +34,8 @@ class News(models.Model):
     class Meta:
         verbose_name = 'Новость'
         verbose_name_plural = 'Новости'
-        ordering = ['-created_at']  # сортировка от новых к старым
+        ordering = ['-created_at']
 
-
-#НОВЫЕ МОДЕЛИ ДЛЯ 13 ЛАБОРАТОРНОЙ
 
 class Author(models.Model):
     """Модель автора комментариев"""

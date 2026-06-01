@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Добавить комментарий :: {{ block.super }}
+{% endblock %}
+
+{% block sidebar %}
+{% include 'inc/_sidebar.html' %}
+{% endblock %}
+
+{% block content %}
+<h2>Добавить комментарий к "{{ news.title }}"</h2>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    
+    {% for field in form %}
+    <div class="mb-3">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.errors %}
+            <div class="invalid-feedback d-block">
+                {{ field.errors }}
+            </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    
+    <button type="submit" class="btn btn-primary">Отправить комментарий</button>
+    <a href="{% url 'news:view_news' news.pk %}" class="btn btn-secondary">Назад к новости</a>
+</form>
+{% endblock %}

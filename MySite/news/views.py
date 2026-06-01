@@ -5,8 +5,11 @@ from django.urls import reverse_lazy
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.db import models
-from .models import News, Category
-from .forms import NewsForm, SubscriptionForm
+from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
+from .models import News, Category, Comment
+from .forms import NewsForm, SubscriptionForm, ContactForm, CommentForm
 from .utils import MyMixin, PopularNewsMixin, ActiveLinkMixin
 
 
@@ -69,7 +72,6 @@ class SearchNews(ListView):
     paginate_by = 2
 
     def get_queryset(self):
-        # Сохраняем query как атрибут класса для использования в get_context_data
         self.query = self.request.GET.get('q', '')
         if self.query:
             return News.objects.filter(title__icontains=self.query, is_published=True)
@@ -78,7 +80,7 @@ class SearchNews(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Результаты поиска'
-        context['query'] = self.query  # Используем сохранённый атрибут
+        context['query'] = self.query
         return context
 
 
@@ -88,3 +90,51 @@ def test(request):
     page_num = request.GET.get('page', 1)
     page_objects = paginator.get_page(page_num)
     return render(request, 'news/test.html', {'page_obj': page_objects})
+
+
+def contact(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data['subject']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['content']
+
+            try:
+                send_mail(
+                    subject=f'Обратная связь: {subject}',
+                    message=f'От: {email}\n\n{message}',
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[settings.CONTACT_EMAIL],
+                    fail_silently=False,
+                )
+                messages.success(request, 'Ваше сообщение отправлено!')
+                return redirect('news:contact')
+            except Exception as e:
+                messages.error(request, f'Ошибка отправки: {e}')
+        else:
+            messages.error(request, 'Пожалуйста, исправьте ошибки в форме')
+    else:
+        form = ContactForm()
+
+    return render(request, 'news/contact.html', {'form': form})
+
+
+# ЗАДАНИЕ 2: ДОБАВЛЕНИЕ КОММЕНТАРИЯ С КАПЧЕЙ
+def add_comment(request, news_id):
+    news = get_object_or_404(News, pk=news_id)
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.news = news
+            comment.save()
+            messages.success(request, 'Комментарий добавлен!')
+            return redirect('news:view_news', pk=news_id)
+        else:
+            messages.error(request, 'Пожалуйста, исправьте ошибки в форме')
+    else:
+        form = CommentForm()
+
+    return render(request, 'news/add_comment.html', {'form': form, 'news': news})
